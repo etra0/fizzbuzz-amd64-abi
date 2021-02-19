@@ -13,15 +13,15 @@ detect_fizz_buzz:
   ; initialize counter
   mov QWORD [RBP+0x8], 1
 
-  ; save RBX
+  ; save RBX (arg 1)
   mov [RBP], RBX
 
   xor RBX, RBX
   mov EBX, EDI
 
   ; print welcome message to prove fizzbuzz is writen in assembly
-  lea RDI, [REL welcome]
-  call printf  WRT ..plt
+  ; lea RDI, [REL welcome]
+  ; call printf  WRT ..plt
 
   .main_loop:
     ; initialize bitmask
@@ -29,6 +29,8 @@ detect_fizz_buzz:
     ; ^ p fizz   ^ p buzz
     mov WORD [RBP+0x10], 0
 
+    ; Check if the value is divisible by 3,
+    ; if it is, it'll set the first bit to 1
     .test_fizz:
       mov EDX, 0
       mov EAX, DWORD [RBP + 0x8]
@@ -37,8 +39,10 @@ detect_fizz_buzz:
 
       test EDX, EDX
       jne .test_buzz
-      mov WORD [RBP+0x10], 1b
+      or WORD [RBP+0x10], 01b
 
+    ; Check if the value is divisible by 5.
+    ; if true, it'll OR the saved value with 10b
     .test_buzz:
       mov EDX, 0
       mov EAX, DWORD [RBP + 0x8]
@@ -51,27 +55,24 @@ detect_fizz_buzz:
 
     .normal_case:
       ; check fizz
-      mov DX, WORD [RBP+0x10]
-      and EDX, 1b
-      test EDX, EDX
-      je .first_check
+      mov R12W, WORD [RBP+0x10]
+      test R12W, 1b
+      jz .first_check
       lea RDI, [REL fizz]
       call printf  WRT ..plt
 
       .first_check:
       ; check buzz
-      mov DX, WORD [RBP+0x10]
-      and EDX, 10b
-      test EDX, EDX
-      je .second_check
+      test R12W, 10b
+      jz .second_check
       lea RDI, [REL buzz]
       call printf  WRT ..plt
 
       .second_check:
-      ; check no other case is set
-      mov DX, WORD [RBP+0x10]
-      test DX, DX
-      jne .while_loop
+      ; check no other case is set,
+      ; to see if we should print a new line
+      test R12W, R12W
+      jnz .while_loop
 
       ; print current number
       lea RDI, [REL message]
@@ -104,7 +105,7 @@ main:
   call exit WRT ..plt
 
 section .data
-  message: db "This number: %d", 0x0
+  message: db "%d", 0x0
   welcome: db "Fizz buzz in pure assembly", 0xA, 0x0
   fizz: db "Fizz", 0
   buzz: db "Buzz", 0

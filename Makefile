@@ -10,6 +10,11 @@ libfizz.a: fizz.asm
 	nasm -felf64 -o libfizz.a fizz.asm
 
 clean:
-	rm ./main ./rust_main libfizz.a
+	rm ./main ./rust_main libfizz.a *txt
 
-.PHONY: rust c
+test: c
+	time ./main > c.txt
+	time ./main asm > asm.txt
+	diff -q c.txt asm.txt
+
+.PHONY: rust c clean test
