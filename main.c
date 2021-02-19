@@ -7,7 +7,7 @@ extern void detect_fizz_buzz(unsigned int v);
 
 void fizzbuzz(unsigned int v)
 {
-  for (unsigned int i = 1; i < v; i++)
+  for (unsigned int i = 1; i <= v; i++)
   {
     if ((i % 3) && (i % 5)) {
       printf("%d\n", i);
