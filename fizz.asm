@@ -52,17 +52,14 @@ detect_fizz_buzz:
     .normal_case:
       ; check fizz
       mov DX, WORD [RBP+0x10]
-      and EDX, 1b
-      test EDX, EDX
+      test EDX, 1b
       je .first_check
       lea RDI, [REL fizz]
       call printf  WRT ..plt
 
       .first_check:
       ; check buzz
-      mov DX, WORD [RBP+0x10]
-      and EDX, 10b
-      test EDX, EDX
+      test EDX, 10b
       je .second_check
       lea RDI, [REL buzz]
       call printf  WRT ..plt
